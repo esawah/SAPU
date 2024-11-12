@@ -12,6 +12,16 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailCotroller = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+// Initially password is obscure
+  bool _obscureText = true;
+
+  // Toggles the password show status
+  void _toggle() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // Mendapatkan ukuran layar
@@ -44,6 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 50),
                 TextField(
                   controller: _emailCotroller,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     labelText: 'email',
                     border: OutlineInputBorder(
@@ -55,14 +66,24 @@ class _LoginPageState extends State<LoginPage> {
                 // TextField untuk Password
                 TextField(
                   controller: _passwordController,
+                  obscureText: _obscureText,
                   decoration: InputDecoration(
-                    labelText: 'kata sandi',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    prefixIcon: Icon(Icons.lock),
-                  ),
-                  obscureText: true, // Menyembunyikan teks password
+                      labelText: 'kata sandi',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      prefixIcon: Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        icon: Icon(_obscureText
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      )),
                 ),
+
                 SizedBox(height: 30),
                 // Tombol Login
                 ElevatedButton(
@@ -71,13 +92,11 @@ class _LoginPageState extends State<LoginPage> {
                         _passwordController.text == '12345') {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => HomePage()),
+                        MaterialPageRoute(builder: (context) => HomePage()),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("email atau kata sandi salah")
-                      ));
+                          content: Text("email atau kata sandi salah")));
                     }
                   },
                   style: ElevatedButton.styleFrom(

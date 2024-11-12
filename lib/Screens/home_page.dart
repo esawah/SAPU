@@ -14,43 +14,55 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<List<User>> _usersFuture;
+  List<User> _allUsers = [];
   List<User> _filteredUsers = [];
   String _searchQuery = '';
   int _selectedIndex = 0;
 
+  bool _isExpanded = false;
+  bool _isFocused = false;
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
-    _refreshUsers();
-  }
+    _loadUsers();
 
-  void _refreshUsers() {
-    setState(() {
-      _usersFuture = DatabaseHelper().getUsers();
-      _usersFuture.then((users) {
-        setState(() {
-          _filteredUsers = users;
-        });
+    // Menambahkan listener untuk mendeteksi fokus pada TextField
+    _focusNode.addListener(() {
+      setState(() {
+        _isFocused = _focusNode.hasFocus;
       });
     });
   }
 
-  void _updateSearch(String query) {
+  // Memuat data pengguna dari database
+  void _loadUsers() {
+    _usersFuture = DatabaseHelper().getUsers();
+    _usersFuture.then((users) {
+      setState(() {
+        _allUsers = users;
+        _filteredUsers = users; // Menampilkan semua data awalnya
+      });
+    });
+  }
+
+  // Mencari pengguna berdasarkan query
+  void _search(String query) {
     setState(() {
       _searchQuery = query;
-      _usersFuture.then((users) {
-        _filteredUsers = users
-            .where(
-                (user) => user.name.toLowerCase().contains(query.toLowerCase()))
-            .toList();
-      });
+      _filteredUsers = _allUsers
+          .where(
+              (user) => user.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
     });
   }
 
   Future<void> _deleteData(int? id) async {
     if (id != null) {
       await DatabaseHelper().deleteData(id);
-      _refreshUsers();
+      _loadUsers(); // Memuat ulang setelah penghapusan
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('ID tidak valid')),
@@ -61,60 +73,122 @@ class _HomePageState extends State<HomePage> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      // Tambahkan aksi navigasi sesuai index, misalnya untuk membuka halaman tertentu.
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Daftar Data Siswa'),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(50.0),
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: TextField(
-              onChanged: _updateSearch,
-              decoration: InputDecoration(
-                hintText: 'Cari siswa...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: BorderSide.none,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child:
+                      Text('Daftar Data Siswa', style: TextStyle(fontSize: 24)),
                 ),
-                filled: true,
-                fillColor: Colors.white,
-                prefixIcon: Icon(Icons.search),
-              ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      width: _isExpanded ? 250 : 50,
+                      child: TextField(
+                        controller: _searchController,
+                        focusNode: _focusNode,
+                        onChanged: _search,
+                        onTap: () {
+                          setState(() {
+                            _isExpanded = true;
+                          });
+                        },
+                        onEditingComplete: () {
+                          setState(() {
+                            _isExpanded = false;
+                          });
+                          _focusNode.unfocus();
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Cari siswa...',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide(
+                                color: _isFocused
+                                    ? Colors.black
+                                    : Colors.transparent,
+                              )),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(
+                              color: Colors.transparent,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2.0),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          suffixIcon: Icon(Icons.search),
+                        ),
+                      ),
+                    ),
+                    // Text('Daftar Data Siswa', style: TextStyle(fontSize: 24)),
+                    // SizedBox(height: 8),
+                    // TextField(
+                    //   onChanged: _search,
+                    //   decoration: InputDecoration(
+                    //     hintTextDirection: TextDirection.rtl,
+                    //     hintText: 'Cari siswa...',
+                    //     border: OutlineInputBorder(
+                    //       borderRadius: BorderRadius.circular(15),
+                    //       borderSide: BorderSide(color: Colors.black),
+                    //     ),
+                    //     filled: true,
+                    //     fillColor: Colors.white,
+                    //     suffixIcon: Icon(Icons.search),
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ],
             ),
           ),
-        ),
-      ),
-      body: FutureBuilder<List<User>>(
-        future: _usersFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text('Error loading data'));
-          } else if (!snapshot.hasData || _filteredUsers.isEmpty) {
-            return const Center(child: Text('Tidak Ada Daftar Data Siswa'));
-          }
+          Expanded(
+            child: FutureBuilder<List<User>>(
+              future: _usersFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading data'));
+                } else if (!snapshot.hasData || _filteredUsers.isEmpty) {
+                  return const Center(
+                      child: Text('Tidak Ada Daftar Data Siswa'));
+                }
 
-          return ListView.builder(
-            itemCount: _filteredUsers.length,
-            itemBuilder: (context, index) {
-              final user = _filteredUsers[index];
-              return UserListTile(
-                user: user,
-                onView: () => _navigateToViewPage(user),
-                onEdit: () => _navigateToEditPage(user),
-                onDelete: () => _confirmDelete(user.id),
-              );
-            },
-          );
-        },
+                // Memperbarui daftar pengguna yang akan ditampilkan
+                return ListView.builder(
+                  itemCount: _filteredUsers.length,
+                  itemBuilder: (context, index) {
+                    final user = _filteredUsers[index];
+                    return UserListTile(
+                      user: user,
+                      onView: () => _navigateToViewPage(user),
+                      onEdit: () => _navigateToEditPage(user),
+                      onDelete: () => _confirmDelete(user.id),
+                    );
+                  },
+                );
+              },
+            ),
+          )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -122,12 +196,10 @@ class _HomePageState extends State<HomePage> {
             context,
             MaterialPageRoute(builder: (context) => AddPage()),
           );
-          _refreshUsers();
+          // Memuat ulang data setelah menambah data
+          _loadUsers();
         },
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
+        child: const Icon(Icons.add, color: Colors.white),
         backgroundColor: Colors.black,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
@@ -168,7 +240,7 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(builder: (context) => EditPage(user: user)),
     );
     if (isUpdated == true) {
-      _refreshUsers();
+      _loadUsers(); // Memuat ulang data setelah edit
     }
   }
 
@@ -215,7 +287,7 @@ class UserListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
       decoration: BoxDecoration(
           color: Colors.amber,
@@ -247,7 +319,7 @@ class UserListTile extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Flexible(
-                  flex: 4, // Memberikan ruang yang lebih besar untuk Nama
+                  flex: 3, // Memberikan ruang yang lebih besar untuk Nama
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
