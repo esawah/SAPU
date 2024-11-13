@@ -4,6 +4,9 @@ import 'package:sapu/Screens/viewData_page.dart';
 import 'package:sapu/db/database_helper.dart';
 import 'package:sapu/models/user_data.dart';
 import 'add_page.dart';
+import 'package:sapu/widget/bottom_navigation.dart';
+import 'package:sapu/Screens/report_page.dart';
+import 'package:sapu/Screens/import_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,19 +20,26 @@ class _HomePageState extends State<HomePage> {
   List<User> _allUsers = [];
   List<User> _filteredUsers = [];
   String _searchQuery = '';
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   bool _isExpanded = false;
   bool _isFocused = false;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
+  final List<Widget> _pages = [
+
+    ImportPage(),
+    Scaffold(), // Placeholder for the main user list page
+    ReportPage(),
+  ];
+
   @override
   void initState() {
     super.initState();
     _loadUsers();
 
-    // Menambahkan listener untuk mendeteksi fokus pada TextField
+    // Add listener to detect focus on TextField
     _focusNode.addListener(() {
       setState(() {
         _isFocused = _focusNode.hasFocus;
@@ -37,18 +47,18 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Memuat data pengguna dari database
+  // Load user data from database
   void _loadUsers() {
     _usersFuture = DatabaseHelper().getUsers();
     _usersFuture.then((users) {
       setState(() {
         _allUsers = users;
-        _filteredUsers = users; // Menampilkan semua data awalnya
+        _filteredUsers = users;
       });
     });
   }
 
-  // Mencari pengguna berdasarkan query
+  // Search users based on query
   void _search(String query) {
     setState(() {
       _searchQuery = query;
@@ -62,7 +72,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _deleteData(int? id) async {
     if (id != null) {
       await DatabaseHelper().deleteData(id);
-      _loadUsers(); // Memuat ulang setelah penghapusan
+      _loadUsers(); // Reload data after deletion
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('ID tidak valid')),
@@ -79,153 +89,152 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child:
-                      Text('Daftar Data Siswa', style: TextStyle(fontSize: 24)),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    AnimatedContainer(
-                      duration: Duration(milliseconds: 300),
-                      width: _isExpanded ? 250 : 50,
-                      child: TextField(
-                        controller: _searchController,
-                        focusNode: _focusNode,
-                        onChanged: _search,
-                        onTap: () {
-                          setState(() {
-                            _isExpanded = true;
-                          });
-                        },
-                        onEditingComplete: () {
-                          setState(() {
-                            _isExpanded = false;
-                          });
-                          _focusNode.unfocus();
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Cari siswa...',
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              borderSide: BorderSide(
-                                color: _isFocused
-                                    ? Colors.black
-                                    : Colors.transparent,
-                              )),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 2.0),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                          suffixIcon: Icon(Icons.search),
+      extendBody: true, // Extends the body behind the navigation bar
+      // backgroundColor: Colors.white,
+      body: SafeArea(
+        child: _selectedIndex == 1 // Check if it's the main page index
+            ? Column(
+                children: [
+                  // Search bar and user list for the main screen
+                  // Padding(
+                  //   padding: const EdgeInsets.all(16.0),
+                  //   child: TextField(
+                  //     controller: _searchController,
+                  //     focusNode: _focusNode,
+                  //     onChanged: _search,
+                  //     decoration: InputDecoration(
+                  //       labelText: 'Search',
+                  //       border: OutlineInputBorder(
+                  //         borderRadius: BorderRadius.circular(10.0),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 10, top: 10),
+                          child: Text('Daftar Data Siswa',
+                              style: TextStyle(fontSize: 24)),
                         ),
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                width: _isExpanded ? 250 : 50,
+                                child: TextField(
+                                  controller: _searchController,
+                                  focusNode: _focusNode,
+                                  onChanged: _search,
+                                  onTap: () {
+                                    setState(() {
+                                      _isExpanded = true;
+                                    });
+                                  },
+                                  onEditingComplete: () {
+                                    setState(() {
+                                      _isExpanded = false;
+                                    });
+                                    _focusNode.unfocus();
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: 'Cari siswa...',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: BorderSide(
+                                        color: _isFocused
+                                            ? Colors.black
+                                            : Colors.transparent,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: const BorderSide(
+                                        color: Colors.transparent,
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: const BorderSide(
+                                          color: Colors.black, width: 2.0),
+                                    ),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    suffixIcon: const Icon(Icons.search),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    // Text('Daftar Data Siswa', style: TextStyle(fontSize: 24)),
-                    // SizedBox(height: 8),
-                    // TextField(
-                    //   onChanged: _search,
-                    //   decoration: InputDecoration(
-                    //     hintTextDirection: TextDirection.rtl,
-                    //     hintText: 'Cari siswa...',
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(15),
-                    //       borderSide: BorderSide(color: Colors.black),
-                    //     ),
-                    //     filled: true,
-                    //     fillColor: Colors.white,
-                    //     suffixIcon: Icon(Icons.search),
-                    //   ),
-                    // ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: FutureBuilder<List<User>>(
-              future: _usersFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return const Center(child: Text('Error loading data'));
-                } else if (!snapshot.hasData || _filteredUsers.isEmpty) {
-                  return const Center(
-                      child: Text('Tidak Ada Daftar Data Siswa'));
-                }
+                  ),
+                  Expanded(
+                    child: FutureBuilder<List<User>>(
+                      future: _usersFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return const Center(
+                              child: Text("Error loading users"));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return const Center(child: Text("No users found"));
+                        }
 
-                // Memperbarui daftar pengguna yang akan ditampilkan
-                return ListView.builder(
-                  itemCount: _filteredUsers.length,
-                  itemBuilder: (context, index) {
-                    final user = _filteredUsers[index];
-                    return UserListTile(
-                      user: user,
-                      onView: () => _navigateToViewPage(user),
-                      onEdit: () => _navigateToEditPage(user),
-                      onDelete: () => _confirmDelete(user.id),
-                    );
-                  },
-                );
-              },
+                        return ListView.builder(
+                          itemCount: _filteredUsers.length,
+                          itemBuilder: (context, index) {
+                            final user = _filteredUsers[index];
+                            return UserListTile(
+                              user: user,
+                              onView: () => _navigateToViewPage(user),
+                              onEdit: () => _navigateToEditPage(user),
+                              onDelete: () => _confirmDelete(user.id),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              )
+            : _pages[
+                _selectedIndex], // Show ReportPage or ImportPage based on _selectedIndex
+      ),
+      floatingActionButton: _selectedIndex == 1
+        ? FloatingActionButton(
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddPage()),
+              );
+              // Reload data after adding new user
+              _loadUsers();
+            },
+            child: const Icon(Icons.add, color: Colors.white),
+            backgroundColor: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
             ),
           )
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddPage()),
-          );
-          // Memuat ulang data setelah menambah data
-          _loadUsers();
-        },
-        child: const Icon(Icons.add, color: Colors.white),
-        backgroundColor: Colors.black,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'Students',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
-    );
-  }
+        : null, // No FAB on other pages
+    bottomNavigationBar: BottomNavigation(
+      onTap: _onItemTapped,
+      initialIndex: _selectedIndex, // Ensure index updates correctly
+    ),
+  );
+}
 
   void _navigateToViewPage(User user) {
     Navigator.push(
@@ -240,7 +249,7 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(builder: (context) => EditPage(user: user)),
     );
     if (isUpdated == true) {
-      _loadUsers(); // Memuat ulang data setelah edit
+      _loadUsers(); // Reload data after editing
     }
   }
 
@@ -288,20 +297,20 @@ class UserListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       decoration: BoxDecoration(
-          color: Colors.amber,
-          borderRadius: BorderRadius.circular(15.0),
-          border: Border.all(color: Colors.black)),
+        color: Colors.amber,
+        borderRadius: BorderRadius.circular(15.0),
+        border: Border.all(color: Colors.black),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Plat Nomor dan Nama
           Expanded(
             child: Row(
               children: [
                 Flexible(
-                  flex: 3, // Memberikan ruang yang lebih kecil untuk Plat Nomor
+                  flex: 3,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 12),
                     child: Column(
@@ -319,7 +328,7 @@ class UserListTile extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Flexible(
-                  flex: 3, // Memberikan ruang yang lebih besar untuk Nama
+                  flex: 3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -340,11 +349,11 @@ class UserListTile extends StatelessWidget {
               ],
             ),
           ),
-          // Tombol aksi
+          // Action buttons
           Align(
             alignment: Alignment.centerRight,
             child: Row(
-              mainAxisSize: MainAxisSize.min, // Ruang minimum untuk ikon
+              mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
                   icon: const Icon(Icons.visibility),
