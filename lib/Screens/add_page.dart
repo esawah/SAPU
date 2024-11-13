@@ -68,7 +68,8 @@ class _AddPageState extends State<AddPage> {
             children: [
               _buildTextField('Nama Lengkap', (value) => name = value!),
               _buildTextField('Alamat Tinggal', (value) => address = value!),
-              _buildTextField('Satuan Pendidikan', (value) => education = value!),
+              _buildTextField(
+                  'Satuan Pendidikan', (value) => education = value!),
               _buildTextField('NIS', (value) => nis = value!),
               _buildTextField('NISN', (value) => nisn = value!),
               _buildTextField('Plat Nomor', (value) => plateNumber = value!),
@@ -81,7 +82,8 @@ class _AddPageState extends State<AddPage> {
               _buildTextField('Nama Ibu', (value) => namemother = value!),
               _buildTextField('Nama Ayah', (value) => namefather = value!),
               _buildTextField('Nomor Telepon', (value) => nohp = value!),
-              _buildTextField('Kontak Terdekat', (value) => closetcontact = value!),
+              _buildTextField(
+                  'Kontak Terdekat', (value) => closetcontact = value!),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _saveUser,
@@ -98,7 +100,18 @@ class _AddPageState extends State<AddPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
-        decoration: InputDecoration(labelText: label),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.black),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: const BorderSide(color: Colors.black, width: 2.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: const BorderSide(color: Colors.black, width: 2.0),
+          ),
+        ),
         onSaved: onSaved,
         validator: (value) {
           if (value!.isEmpty) return 'Please enter $label';

@@ -7,53 +7,89 @@ class ViewDataPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(title: const Text('View Data')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            const Text(
-              "Personal Information",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const Divider(),
             UserInfoField(label: 'Nama Lengkap', value: user.name),
-            UserInfoField(label: 'NIS', value: user.nis),
-            UserInfoField(label: 'NISN', value: user.nisn),
-            UserInfoField(label: 'Satuan Pendidikan', value: user.education),
+            Row(
+              children: [
+                Expanded(
+                  child: UserInfoField(label: 'NIS', value: user.nis),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: UserInfoField(label: 'NISN', value: user.nisn),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: screenWidth * 0.45,
+                  child: Expanded(
+                      child: UserInfoField(
+                          label: 'Satuan Pendidikan', value: user.education)),
+                ),
+              ],
+            ),
             UserInfoField(label: 'Tempat Tanggal Lahir', value: user.pdb),
-
-            const SizedBox(height: 20),
-            const Text(
-              "Address Information",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const Divider(),
             UserInfoField(label: 'Alamat Rumah', value: user.address),
-            UserInfoField(label: 'Desa/Kelurahan', value: user.village),
-            UserInfoField(label: 'Kota/Kabupaten', value: user.ward),
-            UserInfoField(label: 'Kecamatan', value: user.subDistrict),
-            UserInfoField(label: 'RT', value: user.rt),
-            UserInfoField(label: 'RW', value: user.rw),
-
-            const SizedBox(height: 20),
-            const Text(
-              "Family Information",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Expanded(
+                    child: UserInfoField(
+                        label: 'Desa/Kelurahan', value: user.village)),
+                SizedBox(width: 8),
+                Expanded(
+                    child: UserInfoField(
+                        label: 'Kota/Kabupaten', value: user.ward)),
+              ],
             ),
-            const Divider(),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: UserInfoField(
+                      label: 'Kecamatan', value: user.subDistrict),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  flex: 2,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: UserInfoField(label: 'RT', value: user.rt),
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: UserInfoField(label: 'RW', value: user.rw),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             UserInfoField(label: 'Nama Ayah', value: user.namefather),
             UserInfoField(label: 'Nama Ibu', value: user.namemother),
-            UserInfoField(label: 'Nomor Telepon', value: user.nohp),
-            UserInfoField(label: 'Kontak Terdekat', value: user.closetcontact),
-
-            const SizedBox(height: 20),
-            const Text(
-              "Other Information",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Expanded(
+                    child: UserInfoField(
+                        label: 'Nomor Telepon', value: user.nohp)),
+                SizedBox(
+                  width: 8,
+                ),
+                Expanded(
+                    child: UserInfoField(
+                        label: 'Kontak Terdekat', value: user.closetcontact)),
+              ],
             ),
-            const Divider(),
             UserInfoField(label: 'Plat Nomor', value: user.plateNumber),
           ],
         ),
@@ -78,6 +114,7 @@ class UserInfoField extends StatelessWidget {
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
+          labelStyle: const TextStyle(color: Colors.black),
           border: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.black, width: 2.0),
           ),
