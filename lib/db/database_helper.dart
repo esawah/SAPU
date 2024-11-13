@@ -99,4 +99,15 @@ class DatabaseHelper {
       print('ID tidak valid');
     }
   }
+
+  Future<bool> userExists(String nis, String nisn) async {
+  final db = await database;
+  var result = await db.query(
+    'users', 
+    where: 'nis = ? OR nisn = ?', 
+    whereArgs: [nis, nisn]
+  );
+  return result.isNotEmpty;
+}
+
 }
