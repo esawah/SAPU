@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:sapu/Screens/landing_page.dart';
+import 'package:sapu/Screens/landing_page.dart';
 import 'package:sapu/Screens/landing_page2.dart';
 
 class SplashScreen extends StatefulWidget {

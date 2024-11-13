@@ -39,14 +39,17 @@ class _EditPageState extends State<EditPage> {
     _adressController = TextEditingController(text: widget.user.address);
     _villageController = TextEditingController(text: widget.user.village);
     _wardController = TextEditingController(text: widget.user.ward);
-    _subDistrictController = TextEditingController(text: widget.user.subDistrict);
+    _subDistrictController =
+        TextEditingController(text: widget.user.subDistrict);
     _rtController = TextEditingController(text: widget.user.rt);
     _rwController = TextEditingController(text: widget.user.rw);
     _namefatherController = TextEditingController(text: widget.user.namefather);
     _namemotherController = TextEditingController(text: widget.user.namemother);
     _nohpController = TextEditingController(text: widget.user.nohp);
-    _closetcotactController = TextEditingController(text: widget.user.closetcontact);
-    _plateNumberController = TextEditingController(text: widget.user.plateNumber);
+    _closetcotactController =
+        TextEditingController(text: widget.user.closetcontact);
+    _plateNumberController =
+        TextEditingController(text: widget.user.plateNumber);
   }
 
   void _updateUser() async {
@@ -77,6 +80,8 @@ class _EditPageState extends State<EditPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(title: const Text("Edit User")),
       body: SingleChildScrollView(
@@ -94,7 +99,6 @@ class _EditPageState extends State<EditPage> {
             _buildTextField(_nisnController, "NISN"),
             _buildTextField(_educationController, "Satuan Pendidikan"),
             _buildTextField(_pdbController, "Tempat Tanggal Lahir"),
-
             const SizedBox(height: 20),
             const Text(
               "Address Information",
@@ -107,7 +111,6 @@ class _EditPageState extends State<EditPage> {
             _buildTextField(_subDistrictController, "Kecamatan"),
             _buildTextField(_rtController, "RT"),
             _buildTextField(_rwController, "RW"),
-
             const SizedBox(height: 20),
             const Text(
               "Family Information",
@@ -118,7 +121,6 @@ class _EditPageState extends State<EditPage> {
             _buildTextField(_namemotherController, "Nama Ibu"),
             _buildTextField(_nohpController, "Nomor Telepon"),
             _buildTextField(_closetcotactController, "Kontak Terdekat"),
-
             const SizedBox(height: 20),
             const Text(
               "Other Information",
@@ -126,10 +128,17 @@ class _EditPageState extends State<EditPage> {
             ),
             const Divider(),
             _buildTextField(_plateNumberController, "Plat Nomor"),
-
             const SizedBox(height: 30),
             Center(
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(screenWidth * 0.35, screenHeight * 0.05),
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
                 onPressed: _updateUser,
                 child: const Text("Update"),
               ),
@@ -148,7 +157,15 @@ class _EditPageState extends State<EditPage> {
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          labelStyle: const TextStyle(color: Colors.black),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: const BorderSide(color: Colors.black, width: 2.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: const BorderSide(color: Colors.black, width: 2.0),
+          ),
         ),
       ),
     );

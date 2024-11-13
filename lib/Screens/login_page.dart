@@ -26,67 +26,84 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     // Mendapatkan ukuran layar
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: SingleChildScrollView(
         child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.1), // Padding responsif
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                    height: 200), // Jarak atas untuk menyeimbangkan tampilan
-                Text(
-                  "LOGIN",
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.1, // Ukuran font responsif
-                    fontFamily: "Poppins-SemiBold",
+          // Padding responsif
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  Padding(padding: EdgeInsets.only(top: screenWidth * 0.25)),
+                  Text(
+                    "LOGIN",
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.1, // Ukuran font responsif
+                      fontFamily: "Poppins-SemiBold",
+                    ),
                   ),
-                ),
-                SizedBox(height: 75),
-                Image.asset(
-                  'assets/images/ilogin.png',
-                  height: screenWidth * 0.35, // Ukuran gambar responsif
-                  fit: BoxFit.contain,
-                ),
-                SizedBox(height: 50),
-                TextField(
-                  controller: _emailCotroller,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'email',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    prefixIcon: Icon(Icons.email),
+                  Image.asset(
+                    'assets/images/ilogin.png',
+                    height: screenWidth * 0.35, // Ukuran gambar responsif
+                    fit: BoxFit.contain,
                   ),
-                ),
-                SizedBox(height: 20),
-                // TextField untuk Password
-                TextField(
-                  controller: _passwordController,
-                  obscureText: _obscureText,
-                  decoration: InputDecoration(
-                      labelText: 'kata sandi',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      prefixIcon: Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(_obscureText
-                            ? Icons.visibility_off
-                            : Icons.visibility),
-                        onPressed: () {
-                          setState(() {
-                            _obscureText = !_obscureText;
-                          });
-                        },
-                      )),
-                ),
+                ],
+              ),
+              Column(
+                children: [
+                  Padding(padding: EdgeInsets.only(top: screenHeight * 0.05)),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                    child: TextField(
+                      controller: _emailCotroller,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        labelText: 'email',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        prefixIcon: const Icon(Icons.email),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: screenWidth * 0.03),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                    child: TextField(
+                      controller: _passwordController,
+                      obscureText: _obscureText,
+                      decoration: InputDecoration(
+                        labelText: 'kata sandi',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        prefixIcon: const Icon(Icons.lock),
+                        suffixIcon: IconButton(
+                          icon: Icon(_obscureText
+                              ? Icons.visibility_off
+                              : Icons.visibility),
+                          onPressed: () {
+                            setState(() {
+                              _obscureText = !_obscureText;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
 
-                SizedBox(height: 30),
-                // Tombol Login
-                ElevatedButton(
+              // Tombol Login
+              SizedBox(height: screenWidth * 0.1),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                child: ElevatedButton(
                   onPressed: () {
                     if (_emailCotroller.text == 'esa@gmail.com' &&
                         _passwordController.text == '12345') {
@@ -108,8 +125,8 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(fontSize: screenWidth * 0.045),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
