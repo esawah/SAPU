@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sapu/Screens/home_page.dart';
+import 'package:sapu/Screens/import_page.dart';
+import 'package:sapu/Screens/landing_page.dart';
+import 'package:sapu/Screens/landing_page2.dart';
 import 'package:sapu/Screens/splash_screen.dart';
 
 void main() {
@@ -12,9 +16,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: '/landing_page',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Poppins'),
-      home: SplashScreen()
+      theme: ThemeData(
+        fontFamily: 'Poppins', 
+        useMaterial3: true,
+        ),
+      routes: {
+        '/landing_page': (context) => (LandingPage2()),
+        '/import_page': (context) => ImportPage(),
+        '/home_page': (context) => HomePage(),
+      },
+      home: const LandingPage2(),
     );
   }
 }

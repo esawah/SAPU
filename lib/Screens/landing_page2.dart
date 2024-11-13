@@ -13,6 +13,7 @@ class LandingPage2 extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
@@ -44,7 +45,7 @@ class LandingPage2 extends StatelessWidget {
                 // Subtitle Text
                 Center(
                   child: Padding(
-                    padding: EdgeInsets.only(top: screenHeight * 0.02),
+                    padding: EdgeInsets.only(top: screenHeight * 0.04),
                     child: RichText(
                       text: TextSpan(
                         style: GoogleFonts.getFont(
@@ -120,10 +121,10 @@ class LandingPage2 extends StatelessWidget {
                       ),
                       children: const [
                         TextSpan(
-                            text:
-                                'Aplikasi ini akan membantu, memudahkan\n'),
+                            text: 'Aplikasi ini akan membantu, memudahkan\n'),
                         TextSpan(
-                            text: 'dan mendigitalisasikan data informasi yang\n'),
+                            text:
+                                'dan mendigitalisasikan data informasi yang\n'),
                         TextSpan(text: 'kamu butuhkan'),
                       ],
                     ),
@@ -133,10 +134,12 @@ class LandingPage2 extends StatelessWidget {
                 Stack(
                   children: [
                     Positioned(
-                      left: -screenWidth * 0.5, // Adjust position based on screen width
+                      left: -screenWidth *
+                          0.5, // Adjust position based on screen width
                       top: screenHeight * 0.12,
                       child: Container(
-                        width: screenWidth * 1.2, // Adjust width for responsiveness
+                        width: screenWidth *
+                            1.2, // Adjust width for responsiveness
                         height: screenHeight * 0.4,
                         child: SvgPicture.asset(
                           "assets/images/polygon.svg",
@@ -162,16 +165,17 @@ class LandingPage2 extends StatelessWidget {
                       right: screenWidth * 0.04,
                       child: ElevatedButton(
                         onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginPage(),
-                          ),
-                        );
-                      },
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LoginPage(),
+                            ),
+                          );
+                        },
                         child: Text('Mulai'),
                         style: ElevatedButton.styleFrom(
-                          fixedSize: Size(screenWidth * 0.35, screenHeight * 0.05),
+                          fixedSize:
+                              Size(screenWidth * 0.35, screenHeight * 0.05),
                           backgroundColor: Colors.black,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
