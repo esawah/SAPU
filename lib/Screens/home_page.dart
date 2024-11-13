@@ -28,9 +28,10 @@ class _HomePageState extends State<HomePage> {
   final FocusNode _focusNode = FocusNode();
 
   final List<Widget> _pages = [
-    ReportPage(),
-    Scaffold(), // Replace with a different widget for the home screen
+
     ImportPage(),
+    Scaffold(), // Placeholder for the main user list page
+    ReportPage(),
   ];
 
   @override
@@ -62,7 +63,8 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _searchQuery = query;
       _filteredUsers = _allUsers
-          .where((user) => user.name.toLowerCase().contains(query.toLowerCase()))
+          .where(
+              (user) => user.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }
@@ -87,120 +89,152 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true, // Extends the body behind the navigation bar
+      // backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: _selectedIndex == 1 // Check if it's the main page index
+            ? Column(
                 children: [
+                  // Search bar and user list for the main screen
+                  // Padding(
+                  //   padding: const EdgeInsets.all(16.0),
+                  //   child: TextField(
+                  //     controller: _searchController,
+                  //     focusNode: _focusNode,
+                  //     onChanged: _search,
+                  //     decoration: InputDecoration(
+                  //       labelText: 'Search',
+                  //       border: OutlineInputBorder(
+                  //         borderRadius: BorderRadius.circular(10.0),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Text('Daftar Data Siswa', style: TextStyle(fontSize: 24)),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      AnimatedContainer(
-                        duration: Duration(milliseconds: 300),
-                        width: _isExpanded ? 250 : 50,
-                        child: TextField(
-                          controller: _searchController,
-                          focusNode: _focusNode,
-                          onChanged: _search,
-                          onTap: () {
-                            setState(() {
-                              _isExpanded = true;
-                            });
-                          },
-                          onEditingComplete: () {
-                            setState(() {
-                              _isExpanded = false;
-                            });
-                            _focusNode.unfocus();
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Cari siswa...',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              borderSide: BorderSide(
-                                color: _isFocused ? Colors.black : Colors.transparent,
+                    padding: const EdgeInsets.only(left: 16, right: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 10, top: 10),
+                          child: Text('Daftar Data Siswa',
+                              style: TextStyle(fontSize: 24)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                width: _isExpanded ? 250 : 50,
+                                child: TextField(
+                                  controller: _searchController,
+                                  focusNode: _focusNode,
+                                  onChanged: _search,
+                                  onTap: () {
+                                    setState(() {
+                                      _isExpanded = true;
+                                    });
+                                  },
+                                  onEditingComplete: () {
+                                    setState(() {
+                                      _isExpanded = false;
+                                    });
+                                    _focusNode.unfocus();
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: 'Cari siswa...',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: BorderSide(
+                                        color: _isFocused
+                                            ? Colors.black
+                                            : Colors.transparent,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: const BorderSide(
+                                        color: Colors.transparent,
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: const BorderSide(
+                                          color: Colors.black, width: 2.0),
+                                    ),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    suffixIcon: const Icon(Icons.search),
+                                  ),
+                                ),
                               ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              borderSide: BorderSide(color: Colors.black, width: 2.0),
-                            ),
-                            filled: true,
-                            fillColor: Colors.white,
-                            suffixIcon: Icon(Icons.search),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: FutureBuilder<List<User>>(
+                      future: _usersFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return const Center(
+                              child: Text("Error loading users"));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return const Center(child: Text("No users found"));
+                        }
+
+                        return ListView.builder(
+                          itemCount: _filteredUsers.length,
+                          itemBuilder: (context, index) {
+                            final user = _filteredUsers[index];
+                            return UserListTile(
+                              user: user,
+                              onView: () => _navigateToViewPage(user),
+                              onEdit: () => _navigateToEditPage(user),
+                              onDelete: () => _confirmDelete(user.id),
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ],
-              ),
+              )
+            : _pages[
+                _selectedIndex], // Show ReportPage or ImportPage based on _selectedIndex
+      ),
+      floatingActionButton: _selectedIndex == 1
+        ? FloatingActionButton(
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddPage()),
+              );
+              // Reload data after adding new user
+              _loadUsers();
+            },
+            child: const Icon(Icons.add, color: Colors.white),
+            backgroundColor: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
             ),
-            Expanded(
-              child: FutureBuilder<List<User>>(
-                future: _usersFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return const Center(child: Text('Error loading data'));
-                  } else if (!snapshot.hasData || _filteredUsers.isEmpty) {
-                    return const Center(child: Text('Tidak Ada Daftar Data Siswa'));
-                  }
-
-                  // Display filtered user list
-                  return ListView.builder(
-                    itemCount: _filteredUsers.length,
-                    itemBuilder: (context, index) {
-                      final user = _filteredUsers[index];
-                      return UserListTile(
-                        user: user,
-                        onView: () => _navigateToViewPage(user),
-                        onEdit: () => _navigateToEditPage(user),
-                        onDelete: () => _confirmDelete(user.id),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddPage()),
-          );
-          // Reload data after adding new user
-          _loadUsers();
-        },
-        child: const Icon(Icons.add, color: Colors.white),
-        backgroundColor: Colors.black,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-      ),
-      bottomNavigationBar: BottomNavigation(
-        onTap: _onItemTapped,
-        initialIndex: _selectedIndex, // Ensure index updates correctly
-      ),
-    );
-  }
+          )
+        : null, // No FAB on other pages
+    bottomNavigationBar: BottomNavigation(
+      onTap: _onItemTapped,
+      initialIndex: _selectedIndex, // Ensure index updates correctly
+    ),
+  );
+}
 
   void _navigateToViewPage(User user) {
     Navigator.push(
@@ -263,7 +297,7 @@ class UserListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       decoration: BoxDecoration(
         color: Colors.amber,
         borderRadius: BorderRadius.circular(15.0),
@@ -315,11 +349,11 @@ class UserListTile extends StatelessWidget {
               ],
             ),
           ),
-          // Tombol aksi
+          // Action buttons
           Align(
             alignment: Alignment.centerRight,
             child: Row(
-              mainAxisSize: MainAxisSize.min, // Ruang minimum untuk ikon
+              mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
                   icon: const Icon(Icons.visibility),

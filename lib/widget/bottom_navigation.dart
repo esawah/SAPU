@@ -14,10 +14,10 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    // double screenWidth = MediaQuery.of(context).size.width;
 
-    double iconSize = screenWidth * 0.07;
-    double paddingSize = screenWidth * 0.015;
+    // double iconSize = screenWidth * 0.07;
+    // double paddingSize = screenWidth * 0.015;
     
     final List<Widget> navigationItems = [
       Padding(

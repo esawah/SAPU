@@ -3,8 +3,7 @@ import 'package:sapu/models/user_data.dart';
 
 class ViewDataPage extends StatelessWidget {
   final User user;
-
-  const ViewDataPage({required this.user});
+  const ViewDataPage({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -12,25 +11,81 @@ class ViewDataPage extends StatelessWidget {
       appBar: AppBar(title: const Text('View Data')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: ListView(
           children: [
-            Text('Nama Lengkap: ${user.name}', style: TextStyle(fontSize: 18)),
-            Text('NIS: ${user.nis}', style: TextStyle(fontSize: 18)),
-            Text('NISN: ${user.nisn}', style: TextStyle(fontSize: 18)),
-            Text('Satuan Pendidikan: ${user.education}', style: TextStyle(fontSize: 18)),
-            Text('Tempat Tanggal Lahir: ${user.pdb}', style: TextStyle(fontSize: 18)),
-            Text('Alamat Rumah: ${user.address}', style: TextStyle(fontSize: 18)),
-            Text('Desa/ keluarahan: ${user.village}', style: TextStyle(fontSize: 18)),
-            Text('Kota/ kabupaten: ${user.ward}', style: TextStyle(fontSize: 18)),
-            Text('Kecamatan: ${user.subDistrict}', style: TextStyle(fontSize: 18)),
-            Text('RT: ${user.rt}', style: TextStyle(fontSize: 18)),
-            Text('RW : ${user.rw}', style: TextStyle(fontSize: 18)),
-            Text('Nama Ayah : ${user.namefather}', style: TextStyle(fontSize: 18)),
-            Text('Nama Ibu : ${user.namemother}', style: TextStyle(fontSize: 18)),
-            Text('Nomor Telepon: ${user.nohp}', style: TextStyle(fontSize: 18)),
-            Text('kontak Tedekat: ${user.closetcontact}', style: TextStyle(fontSize: 18)),
-            Text('Plat Nomor: ${user.plateNumber}', style: TextStyle(fontSize: 18)),
+            const Text(
+              "Personal Information",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const Divider(),
+            UserInfoField(label: 'Nama Lengkap', value: user.name),
+            UserInfoField(label: 'NIS', value: user.nis),
+            UserInfoField(label: 'NISN', value: user.nisn),
+            UserInfoField(label: 'Satuan Pendidikan', value: user.education),
+            UserInfoField(label: 'Tempat Tanggal Lahir', value: user.pdb),
+
+            const SizedBox(height: 20),
+            const Text(
+              "Address Information",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const Divider(),
+            UserInfoField(label: 'Alamat Rumah', value: user.address),
+            UserInfoField(label: 'Desa/Kelurahan', value: user.village),
+            UserInfoField(label: 'Kota/Kabupaten', value: user.ward),
+            UserInfoField(label: 'Kecamatan', value: user.subDistrict),
+            UserInfoField(label: 'RT', value: user.rt),
+            UserInfoField(label: 'RW', value: user.rw),
+
+            const SizedBox(height: 20),
+            const Text(
+              "Family Information",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const Divider(),
+            UserInfoField(label: 'Nama Ayah', value: user.namefather),
+            UserInfoField(label: 'Nama Ibu', value: user.namemother),
+            UserInfoField(label: 'Nomor Telepon', value: user.nohp),
+            UserInfoField(label: 'Kontak Terdekat', value: user.closetcontact),
+
+            const SizedBox(height: 20),
+            const Text(
+              "Other Information",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const Divider(),
+            UserInfoField(label: 'Plat Nomor', value: user.plateNumber),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class UserInfoField extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const UserInfoField({super.key, required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    TextEditingController controller = TextEditingController(text: value);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextField(
+        readOnly: true,
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 2.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: const BorderSide(color: Colors.black, width: 2.0),
+          ),
+          filled: false,
         ),
       ),
     );

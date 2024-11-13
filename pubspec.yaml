@@ -41,6 +41,7 @@ dependencies:
   curved_navigation_bar: ^1.0.6
   flutter_svg: ^2.0.14
   google_fonts: ^6.2.1
+  file_picker: ^8.1.4
 
 dev_dependencies:
   flutter_test:
