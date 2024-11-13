@@ -4,8 +4,11 @@
     <style name="LaunchTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Splash screen background with custom image -->
         <item name="android:windowBackground">@drawable/launch_background</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
-
     <!-- Normal Theme after Splash Screen -->
     <style name="NormalTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Blank background for Flutter UI -->

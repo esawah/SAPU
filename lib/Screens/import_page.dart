@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:sapu/db/database_helper.dart';
+import 'package:sapu/models/user_data.dart';
 
 class ImportPage extends StatefulWidget {
   const ImportPage({super.key});
@@ -11,6 +16,7 @@ class ImportPage extends StatefulWidget {
 
 class _ImportPageState extends State<ImportPage> {
   String? fileName;
+  File? selectedFile;
 
   // Fungsi untuk memilih file
   Future<void> _pickFile() async {
@@ -24,6 +30,7 @@ class _ImportPageState extends State<ImportPage> {
         PlatformFile file = result.files.first;
         setState(() {
           fileName = file.name; // Simpan nama file yang dipilih
+          selectedFile = File(file.path!);
         });
 
         // Tambahkan kode untuk mengimpor atau memproses file yang dipilih
@@ -39,6 +46,56 @@ class _ImportPageState extends State<ImportPage> {
     }
   }
 
+  Future<void> _importDatatoDatabase() async {
+    if (selectedFile == null) return;
+    var bytes = selectedFile!.readAsBytesSync();
+    var excel = Excel.decodeBytes(bytes);
+
+    for (var tabel in excel.tables.keys) {
+      for (var row in excel.tables[tabel]!.rows) {
+        String name = row[0]?.value.toString() ?? '';
+        String nis = row[1]?.value.toString() ?? '';
+        String nisn = row[2]?.value.toString() ?? '';
+        String education = row[3]?.value.toString() ?? '';
+        String pdb = row[4]?.value.toString() ?? '';
+        String address = row[5]?.value.toString() ?? '';
+        String ward = row[6]?.value.toString() ?? '';
+        String subDistrict = row[7]?.value.toString() ?? '';
+        String village = row[8]?.value.toString() ?? '';
+        String rt = row[9]?.value.toString() ?? '';
+        String rw = row[10]?.value.toString() ?? '';
+        String namefather = row[11]?.value.toString() ?? '';
+        String namemother = row[12]?.value.toString() ?? '';
+        String nohp = row[13]?.value.toString() ?? '';
+        String closetcontact = row[14]?.value.toString() ?? '';
+        String plateNumber = row[15]?.value.toString() ?? '';
+
+        await DatabaseHelper().insertUser(User(
+            name: name,
+            address: address,
+            education: education,
+            nis: nis,
+            nisn: nisn,
+            plateNumber: plateNumber,
+            village: village,
+            pdb: pdb,
+            subDistrict: subDistrict,
+            ward: ward,
+            rt: rt,
+            rw: rw,
+            namemother: namemother,
+            namefather: namefather,
+            nohp: nohp,
+            closetcontact: closetcontact));
+      }
+    }
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Data Berhasil Di import'),
+    ));
+
+    Navigator.popAndPushNamed(context, '/home_page');
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -51,8 +108,8 @@ class _ImportPageState extends State<ImportPage> {
           children: [
             Padding(padding: const EdgeInsets.only(top: 16.0)),
             Container(
-              alignment: Alignment.bottomCenter,
-              height: screenHeight * 0.20,
+              alignment: Alignment.center,
+              height: screenHeight * 0.10,
               width: screenWidth * 0.75,
               child: Text(
                 "Import data file Excel Anda di sini",
@@ -63,7 +120,6 @@ class _ImportPageState extends State<ImportPage> {
                 ),
               ),
             ),
-            const Spacer(),
             InkWell(
               onTap: () async {
                 // Memanggil fungsi _pickFile saat InkWell ditekan
@@ -71,7 +127,7 @@ class _ImportPageState extends State<ImportPage> {
               }, // Panggil fungsi _pickFile saat Container ditekan
               child: Container(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
                       'Pilih File',
@@ -99,14 +155,17 @@ class _ImportPageState extends State<ImportPage> {
                 height: screenHeight * 0.14,
                 width: screenWidth * 0.75,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.amber, width: 2.0),
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
+                    // border: Border.all(color: Colors.amber, width: 2.0),
+                    // borderRadius: BorderRadius.circular(15.0),
+                    ),
               ),
             ),
-            const Spacer(),
-            Container(
-              alignment: Alignment.center,
+            InkWell(
+              onTap: () async {
+                await _importDatatoDatabase();
+              },
+              child: Container(
+              alignment: Alignment.topCenter,
               child: Text(
                 "GO",
                 style: GoogleFonts.getFont(
@@ -121,22 +180,11 @@ class _ImportPageState extends State<ImportPage> {
               width: screenWidth * 0.50,
               decoration: BoxDecoration(
                 color: Colors.black,
-                border: Border.all(color: Colors.amber, width: 2.0),
-                borderRadius: BorderRadius.circular(8.0),
+                // border: Border.all(color: Colors.amber, width: 2.0),
+                // borderRadius: BorderRadius.circular(8.0),
               ),
             ),
-            const Spacer(),
-            Container(
-              height: screenHeight * 0.20,
-              width: screenWidth * 0.75,
-              child: Image.asset(
-                "assets/images/ba2.png",
-                width: 200,
-                height: 200,
-                fit: BoxFit.contain,
-              ),
             ),
-            const Spacer(),
           ],
         ),
       ),
