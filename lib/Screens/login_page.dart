@@ -63,8 +63,16 @@ class _LoginPageState extends State<LoginPage> {
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         labelText: 'email',
+                        labelStyle: const TextStyle(color: Colors.black),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide:
+                              const BorderSide(color: Colors.black, width: 2.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide:
+                              const BorderSide(color: Colors.black, width: 2.0),
                         ),
                         prefixIcon: const Icon(Icons.email),
                       ),
@@ -79,8 +87,16 @@ class _LoginPageState extends State<LoginPage> {
                       obscureText: _obscureText,
                       decoration: InputDecoration(
                         labelText: 'kata sandi',
+                        labelStyle: const TextStyle(color: Colors.black),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide:
+                              const BorderSide(color: Colors.black, width: 2.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide:
+                              const BorderSide(color: Colors.black, width: 2.0),
                         ),
                         prefixIcon: const Icon(Icons.lock),
                         suffixIcon: IconButton(

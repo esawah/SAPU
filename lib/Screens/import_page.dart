@@ -51,47 +51,70 @@ class _ImportPageState extends State<ImportPage> {
     var bytes = selectedFile!.readAsBytesSync();
     var excel = Excel.decodeBytes(bytes);
 
+    int newRecordsCount = 0; // Counter for tracking new records
+
     for (var tabel in excel.tables.keys) {
-      for (var row in excel.tables[tabel]!.rows) {
+      for (var row in excel.tables[tabel]!.rows.skip(1)) {
+        // Skip header row
+        String nis = row[3]?.value.toString() ?? '';
+        String nisn = row[4]?.value.toString() ?? '';
+
+        // Check if user with this NIS or NISN already exists in the database
+        bool exists = await DatabaseHelper().userExists(nis, nisn);
+        if (exists) continue; // Skip if user already exists
+
+        // Increment counter for new record
+        newRecordsCount++;
+
+        // Extract and insert the user data if not exists
         String name = row[0]?.value.toString() ?? '';
-        String nis = row[1]?.value.toString() ?? '';
-        String nisn = row[2]?.value.toString() ?? '';
-        String education = row[3]?.value.toString() ?? '';
-        String pdb = row[4]?.value.toString() ?? '';
-        String address = row[5]?.value.toString() ?? '';
-        String ward = row[6]?.value.toString() ?? '';
-        String subDistrict = row[7]?.value.toString() ?? '';
-        String village = row[8]?.value.toString() ?? '';
-        String rt = row[9]?.value.toString() ?? '';
-        String rw = row[10]?.value.toString() ?? '';
-        String namefather = row[11]?.value.toString() ?? '';
-        String namemother = row[12]?.value.toString() ?? '';
-        String nohp = row[13]?.value.toString() ?? '';
-        String closetcontact = row[14]?.value.toString() ?? '';
-        String plateNumber = row[15]?.value.toString() ?? '';
+        String education = row[2]?.value.toString() ?? '';
+        String pdb = row[7]?.value.toString() ?? '';
+        String address = row[1]?.value.toString() ?? '';
+        String ward = row[9]?.value.toString() ?? '';
+        String subDistrict = row[8]?.value.toString() ?? '';
+        String village = row[6]?.value.toString() ?? '';
+        String rt = row[10]?.value.toString() ?? '';
+        String rw = row[11]?.value.toString() ?? '';
+        String namefather = row[12]?.value.toString() ?? '';
+        String namemother = row[13]?.value.toString() ?? '';
+        String nohp = row[14]?.value.toString() ?? '';
+        String closetcontact = row[15]?.value.toString() ?? '';
+        String plateNumber = row[5]?.value.toString() ?? '';
 
         await DatabaseHelper().insertUser(User(
-            name: name,
-            address: address,
-            education: education,
-            nis: nis,
-            nisn: nisn,
-            plateNumber: plateNumber,
-            village: village,
-            pdb: pdb,
-            subDistrict: subDistrict,
-            ward: ward,
-            rt: rt,
-            rw: rw,
-            namemother: namemother,
-            namefather: namefather,
-            nohp: nohp,
-            closetcontact: closetcontact));
+          name: name,
+          address: address,
+          education: education,
+          nis: nis,
+          nisn: nisn,
+          plateNumber: plateNumber,
+          village: village,
+          pdb: pdb,
+          subDistrict: subDistrict,
+          ward: ward,
+          rt: rt,
+          rw: rw,
+          namemother: namemother,
+          namefather: namefather,
+          nohp: nohp,
+          closetcontact: closetcontact,
+        ));
       }
     }
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Data Berhasil Di import'),
-    ));
+
+    // Check if there were any new records inserted
+    if (newRecordsCount > 0) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            'Data Berhasil Diimport. $newRecordsCount data baru ditambahkan.'),
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content:
+            Text('Semua data sudah ada sebelumnya, tidak ada penambahan data.'),
+      ));
+    }
 
     Navigator.popAndPushNamed(context, '/home_page');
   }
@@ -106,7 +129,7 @@ class _ImportPageState extends State<ImportPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(padding: const EdgeInsets.only(top: 16.0)),
+            const Padding(padding: EdgeInsets.only(top: 16.0)),
             Container(
               alignment: Alignment.center,
               height: screenHeight * 0.10,
@@ -154,10 +177,6 @@ class _ImportPageState extends State<ImportPage> {
                 ),
                 height: screenHeight * 0.14,
                 width: screenWidth * 0.75,
-                decoration: BoxDecoration(
-                    // border: Border.all(color: Colors.amber, width: 2.0),
-                    // borderRadius: BorderRadius.circular(15.0),
-                    ),
               ),
             ),
             InkWell(
@@ -165,25 +184,25 @@ class _ImportPageState extends State<ImportPage> {
                 await _importDatatoDatabase();
               },
               child: Container(
-              alignment: Alignment.topCenter,
-              child: Text(
-                "GO",
-                style: GoogleFonts.getFont(
-                  'Inter',
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                alignment: Alignment.center,
+                child: Text(
+                  "GO",
+                  style: GoogleFonts.getFont(
+                    'Inter',
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
+                height: screenHeight * 0.06,
+                width: screenWidth * 0.50,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  // border: Border.all(color: Colors.amber, width: 2.0),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
               ),
-              height: screenHeight * 0.06,
-              width: screenWidth * 0.50,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                // border: Border.all(color: Colors.amber, width: 2.0),
-                // borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
             ),
           ],
         ),
