@@ -36,14 +36,14 @@ class BottomNavigation extends StatelessWidget {
           height: 20,
         ),
       ),
-      Padding(
-        padding: const EdgeInsets.all(6.0),
-        child: SvgPicture.asset(
-          'assets/images/menu2.svg',
-          width: 20,
-          height: 20,
-        ),
-      ),
+      // Padding(
+      //   padding: const EdgeInsets.all(6.0),
+      //   child: SvgPicture.asset(
+      //     'assets/images/menu2.svg',
+      //     width: 20,
+      //     height: 20,
+      //   ),
+      // ),
     ];
 
     return CurvedNavigationBar(

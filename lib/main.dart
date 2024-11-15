@@ -16,18 +16,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/landing_page',
+      // initialRoute: '/landing_page',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Poppins', 
-        useMaterial3: true,
-        ),
-      routes: {
-        '/landing_page': (context) => (LandingPage2()),
-        '/import_page': (context) => ImportPage(),
-        '/home_page': (context) => HomePage(),
-      },
-      home: const LandingPage2(),
+      theme: ThemeData(fontFamily: 'Poppins'),
+      home: SplashScreen()
+      // theme: ThemeData(
+      //   fontFamily: 'Poppins', 
+      //   useMaterial3: true,
+      //   ),
+      // routes: {
+      //   '/landing_page': (context) => (LandingPage2()),
+      //   '/import_page': (context) => ImportPage(),
+      //   '/home_page': (context) => HomePage(),
+      // },
+      // home: const LandingPage2(),
     );
   }
 }

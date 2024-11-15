@@ -30,8 +30,8 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
 
     ImportPage(),
-    Scaffold(), // Placeholder for the main user list page
-    ReportPage(),
+    Scaffold(),
+    // ReportPage() // Placeholder for the main user list page
   ];
 
   @override

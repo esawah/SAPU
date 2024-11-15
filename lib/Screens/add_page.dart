@@ -58,6 +58,8 @@ class _AddPageState extends State<AddPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(title: const Text('Add Data')),
       body: SingleChildScrollView(
@@ -70,22 +72,34 @@ class _AddPageState extends State<AddPage> {
               _buildTextField('Alamat Tinggal', (value) => address = value!),
               _buildTextField(
                   'Satuan Pendidikan', (value) => education = value!),
-              _buildTextField('NIS', (value) => nis = value!),
-              _buildTextField('NISN', (value) => nisn = value!),
+              _buildTextField('NIS', (value) => nis = value!,
+                  isNumeric: true, isRequired: false),
+              _buildTextField('NISN', (value) => nisn = value!,
+                  isNumeric: true, isRequired: false),
               _buildTextField('Plat Nomor', (value) => plateNumber = value!),
               _buildTextField('Tempat Tanggal Lahir', (value) => pdb = value!),
               _buildTextField('Kecamatan', (value) => subDistrict = value!),
               _buildTextField('Kota/Kabupaten', (value) => ward = value!),
               _buildTextField('Desa/Kelurahan', (value) => village = value!),
-              _buildTextField('RT', (value) => rt = value!),
-              _buildTextField('RW', (value) => rw = value!),
+              _buildTextField('RT', (value) => rt = value!, isNumeric: true),
+              _buildTextField('RW', (value) => rw = value!, isNumeric: true),
               _buildTextField('Nama Ibu', (value) => namemother = value!),
               _buildTextField('Nama Ayah', (value) => namefather = value!),
-              _buildTextField('Nomor Telepon', (value) => nohp = value!),
+              _buildTextField('Nomor Telepon', (value) => nohp = value!,
+                  isNumeric: true),
               _buildTextField(
-                  'Kontak Terdekat', (value) => closetcontact = value!),
+                  'Kontak Terdekat', (value) => closetcontact = value!,
+                  isNumeric: true),
               const SizedBox(height: 20),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(screenWidth * 0.35, screenHeight * 0.05),
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
                 onPressed: _saveUser,
                 child: const Text('Save'),
               ),
@@ -96,7 +110,8 @@ class _AddPageState extends State<AddPage> {
     );
   }
 
-  Widget _buildTextField(String label, FormFieldSetter<String> onSaved) {
+  Widget _buildTextField(String label, FormFieldSetter<String> onSaved,
+      {bool isNumeric = false, bool isRequired = true}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
@@ -114,9 +129,18 @@ class _AddPageState extends State<AddPage> {
         ),
         onSaved: onSaved,
         validator: (value) {
-          if (value!.isEmpty) return 'Please enter $label';
+          if (isRequired && (value == null || value.isEmpty)) {
+            return 'Please enter $label';
+          }
+          if (isNumeric &&
+              value != null &&
+              value.isNotEmpty &&
+              !RegExp(r'^[0-9]+$').hasMatch(value)) {
+            return '$label Hanya nomor yang diperbolehkan';
+          }
           return null;
         },
+        keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
       ),
     );
   }

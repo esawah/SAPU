@@ -104,7 +104,7 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
 
-flutter_native_splash:
+  #flutter_native_splash:
   # This package generates native code to customize Flutter's default white native splash screen
   # with background color and splash image.
   # Customize the parameters below, and run the following command in the terminal:
@@ -120,11 +120,11 @@ flutter_native_splash:
   # of your splash screen to a solid color.  Use background_image to set the background of your
   # splash screen to a png image.  This is useful for gradients. The image will be stretch to the
   # size of the app. Only one parameter can be used, color and background_image cannot both be set.
-  color: '#FBFBFB'
-  background_image: assets/images/logo.png
-  android: true
-  ios: true
-  fullscreen: true
+  #color: '#FBFBFB'
+  #background_image: assets/images/logo.png
+  #android: true
+  #ios: true
+  #fullscreen: true
 
 
   # Optional parameters are listed below.  To enable a parameter, uncomment the line by removing
@@ -159,7 +159,7 @@ flutter_native_splash:
   # From Android 12 onwards, the splash screen is handled differently than in previous versions.
   # Please visit https://developer.android.com/guide/topics/ui/splash-screen
   # Following are specific parameters for Android 12+.
-  android_12:
+  #android_12:
     # The image parameter sets the splash screen icon image.  If this parameter is not specified,
     # the app's launcher icon will be used instead.
     # Please note that the splash screen will be clipped to a circle on the center of the screen.
@@ -169,13 +169,13 @@ flutter_native_splash:
     # 768 pixels in diameter.  To fit a 1152x1152 image within a circle with a 768 diameter, simply
     # ensure that the most important design elements of your image are placed within a circular area
     # with a 768 diameter at the center of the 1152x1152 canvas.
-    image: assets/images/logo.png
-    android: true
-    ios: true
-    fullscreen: true
+    #image: assets/images/logo.png
+    #android: true
+    #ios: true
+    #fullscreen: true
 
     # Splash screen background color.
-    color: '#FBFBFB'
+    #color: '#FBFBFB'
 
     # App icon background color.
     #icon_background_color: "#111111"
